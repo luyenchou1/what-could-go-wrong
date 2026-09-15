@@ -4,4 +4,4 @@ An illustrated primer on how AI systems are put together, how they could cause c
 
 Live: https://luyenchou1.github.io/what-could-go-wrong/
 
-`index.html` is the page body (source for the Claude artifact). `docs/index.html` is the full document GitHub Pages serves. `build_figs.py` regenerates the 14 inline SVG figures into `index.html`; re-run the wrap step to refresh `docs/`.
+`index.html` is the page body (source for the Claude artifact). `docs/index.html` is the full document GitHub Pages serves. `python3 build.py` builds both from `src.html` (prose with figure placeholders) plus the figure generators in `newfigs.py` and `keptfigs.py`.

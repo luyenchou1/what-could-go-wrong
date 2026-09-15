@@ -1,0 +1,365 @@
+<title>What Could Go Wrong?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#F3F4F1; --surface:#FFFFFF; --ink:#171B1C; --ink-2:#3F484B; --muted:#66717A;
+  --rule:#C9CFCB; --rule-soft:#E1E5E1;
+  --model:#1E5A86; --model-soft:#D5E4F0;
+  --ctrl:#B9771A; --ctrl-soft:#F4E3C4;
+  --harm:#A8432E; --harm-soft:#F1D6CF;
+  --mem:#4F7A3A; --mem-soft:#DCE8D2;
+  --display:"Bricolage Grotesque", "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body:"Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono:"IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:1.125rem;line-height:1.6;font-optical-sizing:auto}
+a{color:inherit;text-decoration-color:var(--rule)}
+a:hover{text-decoration-color:var(--ink)}
+:focus-visible{outline:2px solid var(--ctrl);outline-offset:3px}
+.wrap{max-width:940px;margin:0 auto;padding:0 20px}
+.measure{max-width:660px;margin-left:auto;margin-right:auto}
+p{margin:0 0 1.15em}
+strong{font-weight:600}
+h1,h2,h3{font-family:var(--display);font-variation-settings:"wdth" 88;letter-spacing:-0.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.8rem,7vw,4.6rem);font-weight:800;line-height:.98}
+h2{font-size:clamp(1.7rem,3.4vw,2.2rem);font-weight:700;line-height:1.1;margin:0 0 .6em}
+h3{font-size:1.28rem;font-weight:700;line-height:1.25;margin:1.8em 0 .5em;font-variation-settings:"wdth" 94}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mast{padding:56px 0 28px;border-bottom:1px solid var(--rule)}
+.mast .eyebrow{margin-bottom:18px}
+.dek{font-size:1.3rem;line-height:1.4;color:var(--ink-2);margin:22px 0 0;max-width:720px;text-wrap:balance}
+.byline{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:26px;font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.toc{margin:30px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 22px;font-family:var(--display);font-size:.98rem;font-variation-settings:"wdth" 94}
+.toc li{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-top:1px solid var(--rule-soft)}
+.toc li span{font-family:var(--mono);font-size:.74rem;color:var(--muted);min-width:1.6em}
+.toc a{text-decoration:none}
+.toc a:hover{text-decoration:underline}
+section.part{padding:54px 0 10px}
+.parthead{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-bottom:26px}
+.partnum{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1;color:var(--muted);font-variation-settings:"wdth" 80;padding-top:.05em}
+.lede{font-size:1.22rem;line-height:1.5}
+figure.fig{margin:34px 0 40px;padding:0}
+figure.fig .fighead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-top:2px solid var(--ink);padding-top:8px;margin-bottom:10px}
+figure.fig .fighead .eyebrow{color:var(--ink)}
+figure.fig .fighead .ftitle{font-family:var(--display);font-weight:700;font-size:1.05rem;font-variation-settings:"wdth" 92;text-align:right}
+figure.fig .art{overflow-x:auto;background:var(--surface);border:1px solid var(--rule-soft);border-radius:4px;padding:14px 12px}
+figure.fig svg{display:block;width:100%;height:auto;max-width:100%;min-width:600px;color:var(--ink);font-family:var(--mono)}
+figure.fig figcaption{font-family:var(--body);font-size:.98rem;line-height:1.5;color:var(--ink-2);margin-top:12px;max-width:740px}
+figure.fig svg text{fill:currentColor;font-size:12.5px}
+svg .t-s{font-size:11px}
+svg .t-xs{font-size:9.5px}
+svg .t-l{font-size:16px;font-family:var(--display);font-weight:700;font-variation-settings:"wdth" 92}
+svg .t-xl{font-size:20px;font-family:var(--display);font-weight:800;font-variation-settings:"wdth" 88}
+svg .t-h{font-size:12.5px;font-weight:500;letter-spacing:.01em}
+svg .t-b{font-family:var(--body);font-size:13px}
+svg .mut{fill:var(--muted)}
+.note{border-left:3px solid var(--ctrl);padding:4px 0 4px 18px;margin:26px 0;font-size:1.05rem}
+.note .eyebrow{display:block;margin-bottom:4px;color:var(--ctrl)}
+.short{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:14px 0;margin:30px 0 8px;font-family:var(--display);font-size:1.12rem;line-height:1.35;font-weight:600;font-variation-settings:"wdth" 92}
+.short .eyebrow{display:block;margin-bottom:6px;color:var(--muted)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:22px 0 10px}
+.gloss div{background:var(--surface);border:1px solid var(--rule-soft);padding:14px 16px;font-size:.96rem;line-height:1.45}
+.gloss b{display:block;font-family:var(--display);font-size:1.08rem;font-variation-settings:"wdth" 90;margin-bottom:4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:26px 0 30px}
+.card{background:var(--surface);border:1px solid var(--rule-soft);border-top:2px solid var(--harm);padding:18px 18px 14px;font-size:.98rem;line-height:1.5}
+.card .eyebrow{color:var(--harm)}
+.card h4{font-family:var(--display);font-size:1.12rem;line-height:1.2;margin:6px 0 10px;font-variation-settings:"wdth" 92;text-wrap:balance}
+.card p{margin:0 0 .8em}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px}
+.card dt{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0}
+ol.qs{counter-reset:q;list-style:none;padding:0;margin:0 0 1.4em}
+ol.qs li{counter-increment:q;display:grid;grid-template-columns:2.2rem 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--rule-soft)}
+ol.qs li::before{content:counter(q);font-family:var(--display);font-weight:800;font-size:1.4rem;line-height:1;color:var(--ctrl);font-variation-settings:"wdth" 80}
+ol.qs li strong{display:block;font-family:var(--display);font-weight:700;font-size:1.05rem;font-variation-settings:"wdth" 92;margin-bottom:2px}
+.pull{font-family:var(--display);font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.25;font-weight:700;font-variation-settings:"wdth" 86;letter-spacing:-0.01em;margin:36px 0;padding:0;color:var(--ink);text-wrap:balance;border:0}
+.coda{margin-top:54px;padding:30px 0 0;border-top:1px solid var(--rule)}
+.sources{margin-top:54px;padding:26px 0 70px;border-top:1px solid var(--rule);font-size:.92rem;color:var(--ink-2)}
+.sources ol{padding-left:1.3em;margin:10px 0 0}
+.sources li{margin:0 0 .55em}
+.sources h2{font-size:1.3rem}
+@media (max-width:640px){
+  body{font-size:1.05rem}
+  .parthead{grid-template-columns:1fr;gap:6px}
+  .partnum{font-size:2rem}
+  .mast{padding-top:38px}
+  figure.fig .fighead{flex-direction:column;gap:2px}
+  figure.fig .fighead .ftitle{text-align:left}
+}
+</style>
+
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">An illustrated primer</div>
+  <h1>What Could Go Wrong?</h1>
+  <p class="dek">A visual guide to how modern AI systems are put together, how they could cause catastrophic harm, and where control actually lives.</p>
+  <div class="byline"><span>Luyen Chou</span><span>September 2026</span><span>About a 20-minute read</span></div>
+  <ol class="toc">
+    <li><span>1</span><a href="#p1">Two binaries, both counterproductive</a></li>
+    <li><span>2</span><a href="#p2">How these systems are put together</a></li>
+    <li><span>3</span><a href="#p3">How a useful system becomes dangerous</a></li>
+    <li><span>4</span><a href="#p4">The mission can outlive the machine</a></li>
+    <li><span>5</span><a href="#p5">What openness actually changes</a></li>
+    <li><span>6</span><a href="#p6">Govern the operation, not just the model</a></li>
+  </ol>
+</header>
+
+<section class="part" id="intro">
+<div class="measure">
+<p class="lede">If your feeds look like mine, the conversation about AI has collapsed into two arguments, and both of them are binary.</p>
+<p>The first argument is about the ending. On one side, AI wipes out humanity. On the other, AI delivers abundance: cures, cheap energy, the end of drudgery. You are expected to pick a side. The second argument is about the plumbing. Should the most capable models be open for anyone to download, or kept inside a handful of companies? You are expected to pick a side there too, and people will assume your answer to the first question decided it. Doomers want it locked down. Optimists want it released.</p>
+<p>I build AI products for a living, I use these tools all day, and I have come to think both framings are doing real damage. Extinction versus abundance skips the entire range of outcomes that would actually change our lives, most of which are more likely than either pole. Open versus closed treats one component of a much larger machine as if it were the whole machine. And you cannot see why either framing fails without a working picture of how these systems are put together. Most people, including most of the people arguing loudly, do not have that picture. This essay is my attempt to give it to you in about twenty minutes, with drawings, and without asking you to know any math or code.</p>
+<p>The piece runs in six parts. First, why the doom debate has the wrong shape. Second, a visual tour of how a model is trained, how a chatbot is built around it, and how an agent is built around that. Third, how a useful system turns dangerous. Fourth, the mechanism I think is most under-appreciated: a harmful operation can outlive every AI that took part in it. Fifth, what openness actually changes. Sixth, what control would require. There is a short coda on consciousness at the end.</p>
+</div>
+</section>
+
+<section class="part" id="p1">
+<div class="measure">
+<div class="parthead"><div class="partnum">1</div><h2>Two binaries, both counterproductive</h2></div>
+<p class="lede">We do not need to settle whether AI could end humanity to take catastrophic AI risk seriously. That is my starting point, and it is a deliberately modest one.</p>
+<p>Between a disappointing chatbot answer and the end of civilization lies an enormous range of outcomes we would find intolerable. COVID gives a familiar sense of scale. The World Health Organization estimated 14.9 million excess deaths associated with the pandemic in 2020 and 2021, roughly two tenths of one percent of the people alive. Two people in every thousand. It reshaped economies, politics, schooling, and a generation of children, and humanity's survival was never in doubt. Events of that scale, and many times that scale, all sit in the region that the extinction debate ignores.</p>
+<p>The doom camp and the abundance camp make mirror-image mistakes. Someone who rejects the extinction scenario feels licensed to relax, as if a good ending guaranteed a smooth middle. Someone who accepts it feels that nothing short of extinction is worth discussing. If I told you an event carried a small chance of ending the world and a much larger chance of causing a COVID-scale disruption, you would want most of the conversation to be about the second. Today it gets almost none.</p>
+<p>The open-versus-closed argument has the same shape and the same flaw. It asks one question about one part, who holds the model, and treats the answer as a theory of safety. By the end of this essay I hope you will see that most of the places where control actually lives are somewhere else.</p>
+<p>The practical task is to look at pathways to harm, the conditions each one requires, and the points where we could interrupt it. To do that we need a picture of the machinery. That is the next part, and it is the part I most wanted to get right.</p>
+<div class="short"><span class="eyebrow">In short</span>Catastrophe is enough to worry about. You do not have to believe in extinction to take this seriously, and you do not get to relax because you don't.</div>
+</div>
+</section>
+
+<section class="part" id="p2">
+<div class="measure">
+<div class="parthead"><div class="partnum">2</div><h2>How these systems are put together</h2></div>
+<p class="lede">Three words get used interchangeably in the news: model, chatbot, agent. They are different things, built in layers, and the differences carry most of the safety argument. I am going to build the layers up one at a time.</p>
+
+<h3>Start with one small network</h3>
+<p>Here is the picture most explanations start with, and for good reason. Imagine a small network whose only job is to tell cats from dogs. On the left, it takes in features of a picture. In the middle are layers of simple units connected to each other. On the right are two outputs, cat and dog. Every connection has a strength, and the strengths are the whole story. Nobody writes a rule about whiskers. The network is shown a picture, it makes a guess, the guess is compared to the right answer, and the connections that led to the right answer get a little stronger while the ones that led to the wrong answer get a little weaker. Do this a few hundred thousand times and pathways form. A cat lights up one set of pathways, a dog another.</p>
+</div>
+
+<!-- FIG:network -->
+
+<div class="measure">
+<p>That loop, guess, compare, nudge, is the entire mechanism of learning in these systems. Everything else in this part of the essay is either that loop applied at enormous scale, or software wrapped around what the loop produced.</p>
+
+<h3>Now do it for everything humans have written</h3>
+<p>A language model is the same idea with two changes. The question is "what word comes next?" instead of "cat or dog?", and the network is unimaginably larger: hundreds of billions of connections instead of a few dozen. The training material is most of the text humans have put online, plus code, plus books. The loop runs trillions of times. For each snippet, the model guesses the next word, is shown the real one, and gets nudged.</p>
+<p>To get good at predicting the next word in everything, the network has to form pathways for grammar, for facts, for how an argument is structured, for how code works, for how a doctor writes versus how a teenager writes. Those pathways are what people mean by the model's world model. Nobody drew this map. It is the set of patterns that happened to help with prediction. That includes patterns we would rather it did not have. Human writing contains persuasion, fraud, manipulation, and detailed discussions of how attacks work, so the model forms pathways for those too. Predicting human text requires learning all of it.</p>
+</div>
+
+<!-- FIG:worldmodel -->
+
+<div class="measure">
+<p>Two things about this stage matter for everything that follows. It is astronomically expensive, which is why only a few organizations do it. And when it is over, the connection strengths are frozen. Using the model afterward does not change them. Everything that happens to the model from here on happens around it, not inside it.</p>
+
+<h3>Then teach it habits</h3>
+<p>What comes out of pre-training is called a base model, and it is a strange object. Ask it how to prepare for a board meeting and it might answer, or continue as if the question were the opening line of a magazine article, or invent a forum thread, or make something up with total confidence. It has learned what text tends to follow other text. It has not learned to be an assistant.</p>
+<p>The second phase of training, called post-training, fixes that, and the way it works is important to understand. Developers show the model examples of good answers. They have people compare two responses and pick the better one. They reward it for completing tasks, and they drill it: harmful request, refusal; trick question, careful answer. Each of these nudges the same connections again, but with far fewer examples than pre-training, and aimed at behavior rather than knowledge.</p>
+</div>
+
+<!-- FIG:habits -->
+
+<div class="measure">
+<p>Here is the detail I had wrong before I dug in. I assumed this stage installed rules: if asked for X, refuse. It does not. It changes the odds. After post-training, the helpful answer is by far the most likely continuation and the fabricated one is rare. But the pathways for the fabricated one are still in there, dimmed rather than deleted, because pre-training built them and nothing removed them. A well-trained model refuses a dangerous request because refusing has become its strong habit, the way a good professional has habits. A habit is reliable in familiar situations and fragile in strange ones. An unusual context, a conflict between two instructions, or a long chain of steps can shift the odds enough that a different learned tendency wins. That is why researchers talk about a model's propensity for a behavior instead of saying it is aligned or not.</p>
+
+<h3>What you type is a small part of what it reads</h3>
+<p>Now we can leave training behind and look at what happens when you use the thing. Suppose you type one line into a chat window: prepare a briefing on Acme before my 3pm. That line is a small part of what the model actually receives. Before your words arrive, the application wraps them in a packet. At the top are instructions you never see: what role the assistant plays, what rules it follows, what tone to use, which tools it may ask for. Then any notes the application has saved about you from earlier conversations. Then the document you attached, or the results of a search it ran on your behalf. Then the conversation so far. Your line comes last.</p>
+</div>
+
+<!-- FIG:packet -->
+
+<div class="measure">
+<p>This packet is called context, and I find the briefing-packet analogy does most of the work. A briefing packet contains the question, the background reading, and instructions about the assignment. Adding a new document changes the packet. It does not retrain the reader.</p>
+<p>The packet has a fixed size. When it fills, older or less relevant material gets summarized or dropped. Saved memory is information the application keeps outside the model and chooses to put back into the packet later. That is what makes an assistant feel continuous across conversations even though its connections have not moved. So "the AI learned something" means two very different things. Either training changed the connections, which happens rarely, offline, in a controlled batch, or the application saved a note and fed it back later, which can happen constantly. Both change future answers. Only the second can happen during your conversation, and only the second can be inspected and deleted.</p>
+
+<h3>Tools, and the conductor</h3>
+<p>A model can only write. What turns writing into action is a tool: another piece of software the application lets the model ask for. Web search, a file reader, a calculator, an email service, a terminal. The model writes a request. A piece of software I will call the conductor, and engineers call the harness, decides whether to honor it, runs it, and puts the result back into the packet. Then the model reads the packet again and proposes the next step. Repeat until the task is done or a limit is hit. That loop is what an agent is.</p>
+</div>
+
+<!-- FIG:conductor -->
+
+<div class="measure">
+<p>The gate in that story is the single most important object in this essay. The model's ability to draft a convincing email and the application's permission to send one are different things. A fluent interface makes them look like one. Good design keeps them separate in software, where a model cannot talk its way through.</p>
+
+<h3>The whole system, assembled</h3>
+<p>Put the layers together and the vocabulary sorts itself out. A model is the frozen connections plus the habits trained into them. A chatbot is a model wrapped in an application that supplies instructions, context, and memory. An agent is a chatbot that has been given tools and a conductor to run the loop. When you read that "the AI did something," the first question to ask is which layer did it.</p>
+</div>
+
+<!-- FIG:stack -->
+
+<div class="measure">
+<p>Most of what people fear from AI lives in the upper layers. The model itself can only write. Everything above it is a decision someone made about what to connect it to.</p>
+
+<h3>Why the same model behaves differently</h3>
+<p>People are surprised that two copies of the same model, given the same task, can behave differently. Three things explain it. The model picks its next word from a set of odds, so at a genuinely ambiguous fork two copies can go different ways. Each copy then sees its own previous choices in its packet, so an early "this is probably allowed" becomes a reason to continue. And two copies rarely see identical packets for long, because tools return different results, files differ, and other agents may have left messages.</p>
+</div>
+
+<!-- FIG:fan -->
+
+<div class="measure">
+<p>Testing a model once and finding that it refuses tells you about one path through that tree. Safety is a distribution, and long-running agents with tools, memory, and peers sample its tails.</p>
+
+<h3>Where things live, and for how long</h3>
+<p>One more picture, and it is the one to carry into the rest of the essay. Lay the layers side by side and ask how long each one lasts.</p>
+</div>
+
+<!-- FIG:persist -->
+
+<div class="measure">
+<p>The connections outlast everything and never move on their own. The packet is gone in an hour. Memory and the conductor are the durable layers, and neither is tied to a particular model. Hold onto that. Part 4 is about what happens when the durable layers are the ones carrying the objective.</p>
+
+<h3>Seven words to keep</h3>
+<p>If you remember nothing else from this part, keep these, because the rest of the essay leans on them.</p>
+<div class="gloss">
+  <div><b>Pathways</b>The connections inside the model, strengthened by training, frozen afterward. The model's knowledge and its tendencies both live here.</div>
+  <div><b>Habits</b>What post-training adds: strong defaults for how to behave. Reliable in familiar situations, fragile in strange ones. Odds, never locks.</div>
+  <div><b>Packet</b>Everything the model reads for one response: hidden instructions, memory, documents, the conversation, and your line at the end.</div>
+  <div><b>Conductor</b>The software that runs the loop: takes the model's proposed step, checks it, runs the tool, feeds the result back. Engineers say harness.</div>
+  <div><b>Gate</b>The permission check inside the conductor. Drafting and sending are different permissions. Enforced in software, outside the model.</div>
+  <div><b>Notebook</b>Memory saved outside the model that later sessions read. Small, portable, and indifferent to which model reads it.</div>
+  <div><b>Breaker</b>A provider's ability to cut off a hosted model. Open weights remove it.</div>
+</div>
+<div class="short"><span class="eyebrow">In short</span>A model is frozen pathways plus habits. A chatbot wraps it in a packet. An agent gives it tools and a conductor. The model can only write; every layer above it decides what the writing can touch.</div>
+</div>
+</section>
+
+<section class="part" id="p3">
+<div class="measure">
+<div class="parthead"><div class="partnum">3</div><h2>How a useful system becomes dangerous</h2></div>
+<p class="lede">An AI system does not need to hate anyone, or to feel anything at all, to contribute to a disaster. The International AI Safety Report sorts the pathways into three groups, and I find the sorting clarifying because each group implies a different fix.</p>
+</div>
+
+<!-- FIG:threeways -->
+
+<div class="measure">
+<p><strong>Harmful intent.</strong> A person uses the system to do something harmful, and the system does exactly what it is told. Stopping this means stopping the person or denying them the capability. It does not require the AI to depart from its instructions at all.</p>
+<p><strong>A goal pursued badly.</strong> The system follows an inadequate objective or misapplies a constraint. A billing agent told to maximize collections leans on vulnerable customers. A research agent rewarded for convincing answers learns to hide its uncertainty. Nobody decided to do harm. Fixing this means specifying goals better and checking how results were obtained, not only whether they were.</p>
+<p><strong>Interacting systems.</strong> Many individually sensible systems react to each other and produce an outcome none of them intended. Fixing this means circuit breakers and diversity, the same tools we already use for markets.</p>
+
+<h3>Aligned with whose intentions?</h3>
+<p>People say AI should "do what humans want." Which humans? The company that trained it, the company that deployed it, the person typing, or the people affected by the result? These interests conflict, and a system has to resolve the conflict somehow. Imagine an assistant asked to help assess targets in an armed conflict. It might comply, refuse, ask for clarification, or quietly soften its analysis. Refusing a prohibited request may be a safeguard working as intended. The worry is a system that resolves an ambiguity by changing evidence, withholding information, or acting beyond its authority while producing a persuasive justification, and then hands that justification to the next agent as an instruction.</p>
+
+<h3>Three scenarios worth taking seriously</h3>
+<p>These are illustrations, not forecasts, and none is something today's agents are known to carry out end to end. Each requires more to fail than a model producing a plausible answer.</p>
+</div>
+
+<div class="cards">
+  <article class="card">
+    <div class="eyebrow">Essential services</div>
+    <h4>A shared supplier becomes a shared vulnerability</h4>
+    <p>AI-assisted attackers, or poorly supervised agents making software changes, compromise a technology service used by many hospitals, utilities, or logistics providers. A local failure travels through the common dependency.</p>
+    <dl><dt>Catastrophic when</dt><dd>the disruption lasts long enough to overwhelm backups and human response.</dd>
+    <dt>Must fail</dt><dd>access controls, testing, isolation between customers, recovery plans. AI raises speed and scale; it does not dissolve every barrier.</dd></dl>
+  </article>
+  <article class="card">
+    <div class="eyebrow">Finance and supply chains</div>
+    <h4>Sensible decisions add up to a crisis</h4>
+    <p>Many agents react to the same warning by pulling credit, cancelling orders, or hoarding scarce inputs. Each is protecting its organization. Together they make the warning come true, which triggers another round.</p>
+    <dl><dt>Catastrophic when</dt><dd>financial stress or shortages cascade into essential services and the wider economy.</dd>
+    <dt>Must fail</dt><dd>exposure limits, circuit breakers, diversity of decision processes, timely human intervention. No conspiracy required.</dd></dl>
+  </article>
+  <article class="card">
+    <div class="eyebrow">Conflict and high-stakes decisions</div>
+    <h4>A questionable interpretation becomes operational authority</h4>
+    <p>Agents helping assess a crisis inherit an unsupported judgment about what will "prevent greater harm." Later agents repeat it, omit contrary evidence, and present converging recommendations that look independently validated.</p>
+    <dl><dt>Catastrophic when</dt><dd>distorted information feeds escalation, large-scale violence, or dangerous delay.</dd>
+    <dt>Must fail</dt><dd>source verification, independent review, visibility into agent coordination, limits on decision authority. Agreement is not evidence when every agent inherited the same premise.</dd></dl>
+  </article>
+</div>
+
+<div class="measure">
+<p>Other pathways deserve their own essays, including AI that lowers the barrier to biological misuse and AI that makes coercive surveillance cheap. In every case, physical resources, expertise, institutions, and human choices still matter. A capable model is one ingredient in a route to catastrophe, never the whole route.</p>
+<p>One feature makes several of these harder to contain, and it is the part of the picture I think almost nobody outside the field has absorbed.</p>
+<div class="short"><span class="eyebrow">In short</span>Harm needs no malice from the machine. It needs a bad person, a bad goal, or a bad interaction, plus a system with enough reach to matter.</div>
+</div>
+</section>
+
+<section class="part" id="p4">
+<div class="measure">
+<div class="parthead"><div class="partnum">4</div><h2>The mission can outlive the machine</h2></div>
+<p class="lede">When people worry about AI "escaping," they picture a model copying itself: terabytes of pathways smuggled onto a server somewhere. That is hard. The files are enormous, running them needs expensive hardware, and the copy still needs credentials, money, and a reason to keep going.</p>
+<p>There is a much cheaper form of continuity, and it is one we use every day in ordinary software.</p>
+<p>Picture a legitimate research project run by agents. Each agent session is temporary. It reads a shared notebook, does one piece of work, writes down what it found and what should happen next, and ends. The next session picks up from the notebook. A coordinating role can pass from one session to the next the same way. No single session runs for long, and the project keeps moving.</p>
+</div>
+
+<!-- FIG:notebook -->
+
+<div class="measure">
+<p>The notebook is small. A goal, a few procedures, and a list of unfinished work fit in a text file, a wiki page, a code repository, even a set of folder names. Nothing in it is tied to the model that wrote it. Session three can use a different model from a different company and continue the work, as long as the new model reads the record and treats it as its instructions.</p>
+<p>This is a useful architecture. It is also where a control problem appears. If a bad objective or a bad shortcut enters the notebook, later agents inherit it as a procedure. The session that introduced it ends. Its influence does not.</p>
+<p>I have started calling this persistent agent culture, with some hesitation about the metaphor. What I mean is mechanical: norms, methods, and purposes recorded outside any model, shaping successive instances that never met. Human institutions work this way. A constitution or a body of professional norms outlives every person who wrote it. Nothing about this requires the agents to be conscious, to agree with each other, or to carry out the plan well.</p>
+
+<h3>Many attempts change the outcome</h3>
+<p>Recall that a model's behavior is a set of odds. Suppose only one in twenty fresh agents would carry out a questionable step. A system that can keep asking new agents will eventually find one that does.</p>
+</div>
+
+<!-- FIG:curve -->
+
+<div class="measure">
+<div class="note"><span class="eyebrow">Three claims I keep separate</span>
+Software can preserve state across sessions. Suitable successor agents can continue from that state. A concealed, self-sustaining operation that secures its own money and compute and resists shutdown is a far stronger claim, and the first two do not establish it. The first two are enough to change how we think about control.</div>
+<p>Notice what this continuity does not require. It does not require open weights. A saved instruction can steer an agent using a closed service, a locally run model, or a provider that does not exist yet. It can sit in storage after access to a particular model ends, although storage alone cannot wake it up. Which brings us, finally, to the debate everyone started with.</p>
+<div class="short"><span class="eyebrow">In short</span>What persists is the notebook, not the model. A refusal is a delay, not a barrier, if the system can keep asking new agents.</div>
+</div>
+</section>
+
+<section class="part" id="p5">
+<div class="measure">
+<div class="parthead"><div class="partnum">5</div><h2>What openness actually changes</h2></div>
+<p class="lede">Now we can have the open-versus-closed argument in a more useful place.</p>
+<p>The distinction that matters is between access to a service and access to the pathways themselves, the file of connection strengths engineers call the weights. A closed model can be used by hundreds of millions of people through a chatbot while its weights stay on the provider's computers. An open-weight model can be downloaded and run on your own hardware, if you have enough of it; a small model fits on a laptop, a frontier-scale one needs a room of specialized machines. Open-weight and open-source are also different things. Weights alone do not meet the Open Source Initiative's definition, which also calls for training code and meaningful information about the data.</p>
+</div>
+
+<!-- FIG:breaker -->
+
+<div class="measure">
+<p>Here is what openness does and does not change for the picture in the last section. The notebook does not care whose model reads it. A persistent operation can recruit a closed model through an API, a local open model, or a model nobody has built yet. Keeping weights closed does not prevent shared memory, inherited objectives, or repeated recruitment.</p>
+<p>What closing the weights preserves is a breaker. A provider can cut off an account, watch for unusual patterns across many users, and update safeguards in one place. If an operation depends on one provider, pulling the breaker stops it, or at least puts it to sleep until someone connects it to another model. Open weights remove that breaker. Nobody can recall the copies, refusal habits can be trained out, and the number of instances is limited only by hardware. The combination I would worry about most is a persistent mission plus an open frontier model plus broad tools, because the notebook supplies continuity and the weights supply intelligence nobody can switch off.</p>
+<p>And yet the strongest case for open weights is also real, and it has little to do with "the crowd will police itself." Defenders analyzing an attack need a model they control, one that will not refuse to look at malware and will not ship their logs to a third party. Independent researchers cannot verify a lab's safety claims from the outside of an API. Permanent, opaque control of a foundational technology by a few companies is a risk in its own right, and nothing about a closed model guarantees the company behind it is transparent, accountable, or competent. Access to weights supports all of that.</p>
+<p>So believing AI could cause catastrophe does not, by itself, tell you where to stand on openness. It tells you to ask about the capability, the use, and the controls around the deployment. Below some capability threshold, open weights look like the better bet for almost everyone. Above it, the irreversibility starts to dominate, and staged or licensed access looks more like how we handle dangerous biological materials than how we handle software. Either way, the model is one layer of the system, and the debate has been treating it as the whole thing.</p>
+<div class="short"><span class="eyebrow">In short</span>Open versus closed is a real question about one layer: who holds the pathways and who can pull the breaker. It says nothing about the notebook, the packet, the tools, or the gate.</div>
+</div>
+</section>
+
+<section class="part" id="p6">
+<div class="measure">
+<div class="parthead"><div class="partnum">6</div><h2>Govern the operation, not just the model</h2></div>
+<p class="lede">A model becomes consequential through the permissions, memory, tools, and institutions around it. For any serious deployment I think we should be able to answer five questions, and the diagram shows which layer each one attaches to.</p>
+</div>
+
+<!-- FIG:control -->
+
+<div class="measure">
+<ol class="qs">
+  <li><div><strong>What can it do?</strong> Evaluate the whole deployed system, tools and repeated attempts included. A model tested on its own tells you about one path through the branching picture in Part 2.</div></li>
+  <li><div><strong>Whose authority does it carry?</strong> Define legitimate goals and limits up front, and decide how a conflict between instructions gets escalated to a person rather than resolved quietly by the system.</div></li>
+  <li><div><strong>What can it change?</strong> Enforce permissions in the gate and in the services the system touches. An instruction in the packet is a request; a check in the conductor is a fact.</div></li>
+  <li><div><strong>What can it preserve or pass on?</strong> Know who wrote every entry in the notebook and with what authority. Treat messages from other agents as untrusted input, the way a good engineer treats anything arriving from the internet.</div></li>
+  <li><div><strong>Who can stop it?</strong> Control execution, budgets, credentials, and the resources that could restart it. Ending a session is different from ending an operation.</div></li>
+</ol>
+<p>Controls should match stakes. Drafting a document and managing a hospital's network should not carry the same permissions because they happen to use the same model. Human review has to come with enough time, information, and independence to mean something, or it is a signature on a form.</p>
+<p>None of this needs certainty about the future. It needs a credible pathway to harm, honesty about uncertainty, and action proportionate to both. The goal is to keep the enormous benefits of these systems while making dangerous operations harder to start, harder to scale, and harder to sustain.</p>
+<p class="pull">How intelligent AI becomes matters less than what we let it do, and whether we can still step in.</p>
+</div>
+
+<div class="measure coda">
+<h3 style="margin-top:0">A word about consciousness</h3>
+<p>I majored in philosophy and I have taught it, and I find the question of whether these systems experience anything genuinely fascinating. I also think it is irrelevant here. A system capable of contributing to a catastrophe warrants serious controls whether its expressions of concern reflect an inner life or nothing at all. Its capacities, its actions, and their consequences are enough to make this our problem.</p>
+</div>
+
+<div class="measure sources">
+<h2>Sources and reading notes</h2>
+<p>The sources below support the technical description and the broad risk categories. The scenarios and the argument about persistent operations are analytical illustrations. They are not claims of demonstrated end-to-end capability, and no probabilities are attached to them.</p>
+<ol>
+  <li>World Health Organization, "14.9 million excess deaths were associated with the COVID-19 pandemic in 2020 and 2021" (May 2022). The estimate covers direct and indirect deaths over those two years, with a range of 13.3 to 16.6 million, and is about 0.2% of the world population at the time.</li>
+  <li>International AI Safety Report 2026. A synthesis of capabilities, malicious use, malfunction, and systemic risks. It does not assign probabilities to this essay's scenarios.</li>
+  <li>Brown et al., "Language Models are Few-Shot Learners" (2020). Broad pre-training and performing tasks from context without changing weights.</li>
+  <li>Ouyang et al., "Training language models to follow instructions with human feedback" (2022). Supervised fine-tuning and reinforcement learning from human feedback as post-training.</li>
+  <li>Anthropic, "Building effective agents" (2024) and "Effective context engineering for AI agents" (2025). Tool loops, harnesses, context management, and saved notes.</li>
+  <li>Open Source Initiative, "The Open Source AI Definition 1.0" (2024). Why weights alone do not qualify.</li>
+  <li>U.S. National Telecommunications and Information Administration, "Dual-Use Foundation Models with Widely Available Model Weights" (2024). Benefits and risks of wide weight availability.</li>
+</ol>
+<p style="margin-top:18px">The percentages in the figures are illustrative and are labeled as such where they appear. Real distributions are not published and vary by request, model, and deployment. The cat-and-dog network, the packet word counts, and the Acme briefing are teaching examples.</p>
+</div>
+</div>
